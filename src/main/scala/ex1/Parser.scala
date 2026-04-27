@@ -14,7 +14,7 @@ abstract class Parser[T]:
     (seq forall parse) & end // note &, not &&
 
 object Parsers:
-  extension (s: String) 
+  extension (s: String)
     def charParser(): Parser[Char] = new BasicParser(s.toSet)
 class BasicParser(chars: Set[Char]) extends Parser[Char]:
   override def parse(t: Char): Boolean = chars.contains(t)
@@ -41,10 +41,21 @@ trait NotTwoConsecutive[T] extends Parser[T]:
       super.parse(t)
   abstract override def end: Boolean = super.end
 
-
 class NotTwoConsecutiveParser(chars: Set[Char])
     extends BasicParser(chars) // with ????
     with NotTwoConsecutive[Char]
+
+trait ShorterThen[T](n: Int) extends Parser[T]:
+  private var count = 0
+  abstract override def parse(t: T): Boolean =
+    if count < n then
+      count += 1
+      super.parse(t)
+    else
+      false
+  abstract override def end: Boolean = super.end
+
+class ShorterThenParser(chars: Set[Char], maxLength: Int) extends BasicParser(chars) with ShorterThen[Char](maxLength)
 
 @main def checkParsers(): Unit =
   import Parsers.*

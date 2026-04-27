@@ -13,6 +13,7 @@ class ParserTests extends AnyFunSuite with Matchers:
   // note we do not need a class name here, we use the structural type
   def parserNTCNE = new BasicParser(Set('X', 'Y', 'Z')) with NotTwoConsecutive[Char] with NonEmpty[Char]
   def sparser: Parser[Char] = "abc".charParser()
+  def parserShorterThen = new ShorterThenParser(Set('a', 'b', 'c'), 3)
 
   test("BasicParser"):
     parser.parseAll("aabc".toList) shouldBe true
@@ -38,3 +39,8 @@ class ParserTests extends AnyFunSuite with Matchers:
     sparser.parseAll("aabc".toList) shouldBe true
     sparser.parseAll("aabcdc".toList) shouldBe false
     sparser.parseAll("".toList) shouldBe true
+
+  test("ShorterThenParser should respect the maximum length"):
+    parserShorterThen.parseAll("abc".toList) shouldBe true
+    parserShorterThen.parseAll("abca".toList) shouldBe false
+    parserShorterThen.parseAll("".toList) shouldBe true
