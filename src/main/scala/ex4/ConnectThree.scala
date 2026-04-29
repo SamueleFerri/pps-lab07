@@ -38,10 +38,20 @@ object ConnectThree extends App:
     for
       x <- 0 to bound
       y <- firstAvailableRow(board, x)
-    yield 
+    yield
       board :+ Disk(x, y, player)
 
-  def computeAnyGame(player: Player, moves: Int): LazyList[Game] = ???
+  private def computeAnyGame(player: Player, moves: Int): LazyList[Game] = moves match
+    case 0 => LazyList(Seq(Seq()))
+    case n =>
+      for
+        game <- computeAnyGame(player, n - 1)
+        lastBoard = game.last
+        currentPlayer = if lastBoard.size % 2 == 0 then player else player.other
+        nextBoard <- placeAnyDisk(lastBoard, currentPlayer)
+      yield
+        game :+ nextBoard
+
 
   def printBoards(game: Seq[Board]): Unit =
     for
