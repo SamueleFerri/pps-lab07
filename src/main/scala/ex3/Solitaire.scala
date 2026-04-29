@@ -47,9 +47,10 @@ object Solitaire extends App:
   val h = 5
   val targetMoves = w * h
 
-  val firstSolution = placeMarks(targetMoves, w, h).headOption
+  val solutions = placeMarks(targetMoves, w, h)
+  println(s"Total num of solutions: ${solutions.size}")
 
-  firstSolution match
+  solutions.headOption match
     case Some(solution) =>
       println(s"Solution founded in $targetMoves moves!")
       println(render(solution, w, h))
