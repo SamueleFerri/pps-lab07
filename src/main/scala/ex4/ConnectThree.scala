@@ -34,7 +34,12 @@ object ConnectThree extends App:
     val y = board.count(disk => disk.x == x)
     if y <= bound then Some(y) else None
 
-  def placeAnyDisk(board: Board, player: Player): Seq[Board] = ???
+  private def placeAnyDisk(board: Board, player: Player): Seq[Board] =
+    for
+      x <- 0 to bound
+      y <- firstAvailableRow(board, x)
+    yield 
+      board :+ Disk(x, y, player)
 
   def computeAnyGame(player: Player, moves: Int): LazyList[Game] = ???
 
