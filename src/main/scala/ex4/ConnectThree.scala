@@ -30,7 +30,9 @@ object ConnectThree extends App:
   def find(board: Board, x: Int, y: Int): Option[Player] =
     board.find(disk => disk.x == x && disk.y == y).map(disk => disk.player)
 
-  def firstAvailableRow(board: Board, x: Int): Option[Int] = ???
+  private def firstAvailableRow(board: Board, x: Int): Option[Int] =
+    val y = board.count(disk => disk.x == x)
+    if y <= bound then Some(y) else None
 
   def placeAnyDisk(board: Board, player: Player): Seq[Board] = ???
 
