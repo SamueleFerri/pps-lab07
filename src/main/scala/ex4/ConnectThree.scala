@@ -47,13 +47,26 @@ object ConnectThree extends App:
       for
         game <- computeAnyGame(player, n - 1)
         lastBoard = game.last
-        currentPlayer = if lastBoard.size % 2 == 0 then player else player.other
-        nextBoard <- placeAnyDisk(lastBoard, currentPlayer)
+        nextGame <- if hasWon(lastBoard) then
+          LazyList(game)
+        else
+          val currentPlayer = if lastBoard.size % 2 == 0 then player else player.other
+          placeAnyDisk(lastBoard, currentPlayer).map(board => game :+ board)
       yield
-        game :+ nextBoard
+        nextGame
 
+  private def hasWon(board: Board): Boolean =
+    board.exists { disk =>
+      val player = Some(disk.player)
+      val horizontal = find(board, disk.x + 1, disk.y) == player && find(board, disk.x + 2, disk.y) == player
+      val vertical = find(board, disk.x, disk.y + 1) == player && find(board, disk.x, disk.y + 2) == player
+      val diagonalUp = find(board, disk.x + 1, disk.y + 1) == player && find(board, disk.x + 2, disk.y + 2) == player
+      val diagonalDown = find(board, disk.x + 1, disk.y - 1) == player && find(board, disk.x + 2, disk.y - 2) == player
 
-  def printBoards(game: Seq[Board]): Unit =
+      horizontal || vertical || diagonalUp || diagonalDown
+    }
+
+  private def printBoards(game: Seq[Board]): Unit =
     for
       y <- bound to 0 by -1
       board <- game.reverse
